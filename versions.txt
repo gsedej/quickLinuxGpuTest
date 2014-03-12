@@ -1,0 +1,9 @@
+0.4
+add some settings
+lspci info, multi GPU detection
+use of /tmp for workdir
+offer saving results
+
+0.3
+added kernel mod test check
+vmem size
