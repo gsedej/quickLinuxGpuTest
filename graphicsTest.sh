@@ -2,7 +2,7 @@
 
 # by: Gašper Sedej
 # GPL3 lincence
-# ver 0.2, 2012-07-25
+# ver 0.3
 
 
 if [ $# -ne 1 ] ; then
@@ -10,7 +10,11 @@ if [ $# -ne 1 ] ; then
 	exit
 fi
 
+# variables
 sleepTime="1"
+#intention
+ind1="	"
+ind2="		"
 
 
 echo "Path: `pwd`/$1"
@@ -31,15 +35,22 @@ if [ "$REPLY" == "y" ]; then
 	cat $glxfile | grep -i "opengl"
 	sleep $sleepTime
 	
+	echo "----------"
 	echo "modinfo:"
+	echo "----------"
 	
 	modFile="$1"/"modinfo.out"
 	activeMod=`lsmod | grep -e "i810" -e "i915" -e "r128" -e "radeon" -e "savage" -e "sis" -e "nouveau" -e "poulsbo" -e "fglrx" -e "nvidia" | awk '{print $1}'`
 	echo "Active kernel object: $activeMod"
-	sleep $sleepTime
+	#sleep $sleepTime
 	
 	if [ $activeMod == nvidia ] ; then
+		echo "nvidia with propretarely driver detected"
 		modinfo "nvidia_current" > $modFile
+		# nvidia-smi
+		echo -n "Total memory: "
+		nvidia-smi -q -d MEMORY | grep Total | awk '{print $3}'
+		#echo ""
 	else
 		modinfo $activeMod > $modFile
 		
@@ -47,12 +58,12 @@ if [ "$REPLY" == "y" ]; then
 	cat $modFile | grep file
 	
 	
-	
-	
 	echo "GPU:"
 	#lspci | grep VGA
 	lspci -nn > "$1"/"lspci.out"
 	lspci | grep VGA | cut -f2- -d ' '
+	# gpu memory
+	#for I in `lspci |awk '/VGA/{print $1}'`;do lspci -v -s $I;done | sed -n '/Memory.*, prefetchable/s/.*\[size=\([^]]\+\)\]/\1/p'
 		
 	echo "----------"
 	echo "Graphical benchmarks:"
@@ -77,4 +88,5 @@ if [ "$REPLY" == "y" ]; then
 	cat "/var/log/syslog" > "$1"/"syslog.out"
 	cat "/var/log/Xorg.0.log" > "$1"/"Xorg.0.log.out"
 fi
+
 
